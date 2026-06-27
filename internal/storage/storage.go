@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/slipynil/krypto/internal/dto"
+	"github.com/slipynil/krypto/internal/models"
 )
 
 type StorageService struct {
@@ -43,7 +43,7 @@ func setupDataPath(filename string) (string, error) {
 	return filepath.Join(appDir, filename), nil
 }
 
-func (s *StorageService) SaveData(coins []dto.Coin) error {
+func (s *StorageService) SaveData(coins []models.Coin) error {
 	data, err := json.MarshalIndent(coins, "", "	")
 	if err != nil {
 		return err
@@ -52,14 +52,14 @@ func (s *StorageService) SaveData(coins []dto.Coin) error {
 	return os.WriteFile(s.filepath, data, 0644)
 }
 
-func (s *StorageService) LoadData() ([]dto.Coin, error) {
+func (s *StorageService) LoadData() ([]models.Coin, error) {
 	file, err := os.Open(s.filepath)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	var coins []dto.Coin
+	var coins []models.Coin
 	if err := json.NewDecoder(file).Decode(&coins); err != nil {
 		return nil, err
 	}

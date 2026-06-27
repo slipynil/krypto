@@ -27,7 +27,7 @@ func NewService(apiKey string, curr models.Currency) *ApiService {
 	}
 }
 
-func (a *ApiService) GetCryptoIDs() ([]dto.Coin, error) {
+func (a *ApiService) GetCryptoIDs() ([]models.Coin, error) {
 	u, err := url.JoinPath(a.baseURL, "coins", "list")
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (a *ApiService) GetCryptoIDs() ([]dto.Coin, error) {
 		return nil, err
 	}
 
-	var result []dto.Coin
+	var result []models.Coin
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}

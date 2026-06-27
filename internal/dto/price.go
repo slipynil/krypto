@@ -6,13 +6,6 @@ import (
 	"github.com/slipynil/krypto/internal/models"
 )
 
-type Coin struct {
-	ID        string            `json:"id"`
-	Symbol    string            `json:"symbol"`
-	Name      string            `json:"name"`
-	Platforms map[string]string `json:"platforms"`
-}
-
 // PriceDataUSD содержит конкретные показатели для монеты в USD
 type DataUSD struct {
 	USD         float64 `json:"usd"`

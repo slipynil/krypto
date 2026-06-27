@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/slipynil/krypto/internal/api"
-	"github.com/slipynil/krypto/internal/dto"
 	"github.com/slipynil/krypto/internal/models"
 	"github.com/slipynil/krypto/internal/storage"
 )
@@ -22,13 +21,8 @@ func New(apiSvc *api.ApiService, storageSvc *storage.StorageService) *Manager {
 }
 
 // GetCoins - метод, который скрывает сложность от main.go
-func (m *Manager) GetCoins() ([]dto.Coin, error) {
-	coins, err := m.storage.LoadData()
-	if err == nil && len(coins) > 0 {
-		return coins, nil
-	}
-
-	coins, err = m.api.GetCryptoIDs()
+func (m *Manager) GetCoins() ([]models.Coin, error) {
+	coins, err := m.api.GetCryptoIDs()
 	if err != nil {
 		return nil, err
 	}
@@ -38,13 +32,13 @@ func (m *Manager) GetCoins() ([]dto.Coin, error) {
 }
 
 // FindCoins метод ищет подходящюю криптовалюту по запросу
-func (m *Manager) FindCoins(query string) ([]dto.Coin, error) {
+func (m *Manager) FindCoins(query string) ([]models.Coin, error) {
 	allCoins, err := m.GetCoins() // Берет из кеша или API
 	if err != nil {
 		return nil, err
 	}
 
-	var result []dto.Coin
+	var result []models.Coin
 	for _, coin := range allCoins {
 		if strings.Contains(strings.ToLower(coin.ID), strings.ToLower(query)) {
 			result = append(result, coin)

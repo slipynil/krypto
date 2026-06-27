@@ -3,7 +3,7 @@ package storage
 import (
 	"testing"
 
-	"github.com/slipynil/krypto/internal/dto"
+	"github.com/slipynil/krypto/internal/models"
 )
 
 func TestStorageService_SaveAndLoad(t *testing.T) {
@@ -14,7 +14,7 @@ func TestStorageService_SaveAndLoad(t *testing.T) {
 	}
 
 	// Тестовые данные
-	expected := []dto.Coin{
+	expected := []models.Coin{
 		{ID: "bitcoin", Symbol: "btc", Name: "Bitcoin"},
 		{ID: "ethereum", Symbol: "eth", Name: "Ethereum"},
 	}

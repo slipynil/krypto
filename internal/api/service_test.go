@@ -3,8 +3,10 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/slipynil/krypto/internal/models"
 )
 
@@ -27,10 +29,10 @@ func TestGetPriceInfo_Success(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	svc := NewService("fake-key", models.CURRENCY_RUB)
+	svc := NewService("fake-key")
 	svc.baseURL = ts.URL
 
-	price, err := svc.GetPriceInfo("ethereum")
+	price, err := svc.GetPriceInfo("ethereum", models.CURRENCY_RUB)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,10 +40,6 @@ func TestGetPriceInfo_Success(t *testing.T) {
 	expectedValue := 118872.0
 	if price.Value != expectedValue {
 		t.Errorf("ожидалось Value %f, получили %f", expectedValue, price.Value)
-	}
-
-	if price.CurrencyName != "RUB" {
-		t.Errorf("ожидалось RUB, получили %s", price.CurrencyName)
 	}
 
 	if price.GrowthRate == 0 {
@@ -57,9 +55,9 @@ func TestGetPriceInfo_InvalidJSON(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	svc := NewService("fake-key", models.CURRENCY_RUB)
+	svc := NewService("fake-key")
 	svc.baseURL = ts.URL
-	_, err := svc.GetPriceInfo("bitcoin")
+	_, err := svc.GetPriceInfo("bitcoin", models.CURRENCY_RUB)
 	if err == nil {
 		t.Error("Ожидали ошибку при битом JSON, но получили nil")
 	}
@@ -89,7 +87,7 @@ func TestGetCryptoIDs_Success(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	svc := NewService("fake-key", models.CURRENCY_USD)
+	svc := NewService("fake-key")
 	svc.baseURL = ts.URL
 
 	result, err := svc.GetCryptoIDs()
@@ -126,10 +124,26 @@ func TestGetCryptoIDs_InvalidJSON(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	svc := NewService("fake-key", models.CURRENCY_RUB)
+	svc := NewService("fake-key")
 	svc.baseURL = ts.URL
 	_, err := svc.GetCryptoIDs()
 	if err == nil {
 		t.Error("Ожидали ошибку при битом JSON, но получили nil")
+	}
+}
+
+func TestCheckSwapCurrency(t *testing.T) {
+	if err := godotenv.Load("../../.env"); err != nil {
+		t.Fatalf("unable to load .env: %v", err)
+	}
+	apiKey := os.Getenv("API_KEY")
+	svc := NewService(apiKey)
+	_, err := svc.GetPriceInfo("ethereum", models.CURRENCY_RUB)
+	if err != nil {
+		t.Fatalf("failed to get price info for RUB currency: %v", err)
+	}
+	_, err = svc.GetPriceInfo("ethereum", models.CURRENCY_USD)
+	if err != nil {
+		t.Fatalf("failed to get price info for USD currency: %v", err)
 	}
 }

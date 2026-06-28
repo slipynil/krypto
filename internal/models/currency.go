@@ -10,7 +10,8 @@ const (
 )
 
 type Price struct {
-	CurrencyName  string
+	CoinID        string
+	Name          string
 	Value         float64
 	MarketCap     float64
 	Volume24h     float64

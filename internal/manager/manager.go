@@ -51,6 +51,12 @@ func (m *Manager) FindCoins(query string) ([]models.Coin, error) {
 }
 
 // выводит информацию о криптовалюте
-func (m *Manager) GetInfo(id string) (*models.Price, error) {
-	return m.api.GetPriceInfo(id)
+func (m *Manager) GetInfo(id, name string, curr models.Currency) (*models.Price, error) {
+	price, err := m.api.GetPriceInfo(id, curr)
+	if err != nil {
+		return nil, err
+	}
+	price.Name = name
+	price.CoinID = id
+	return price, nil
 }

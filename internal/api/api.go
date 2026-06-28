@@ -108,6 +108,9 @@ func (a *ApiService) fetchDataWithRertry(u string, target any) error {
 
 	for i := range maxRetries {
 		err = a.fetchData(u, target)
+		if err == nil {
+			return nil
+		}
 		time.Sleep(time.Duration(i*2+1) * time.Second)
 	}
 	return fmt.Errorf("number of attempts exceeded: %v", err)

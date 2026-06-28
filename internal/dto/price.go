@@ -26,22 +26,20 @@ type DataRUB struct {
 
 func (d DataRUB) ToModel() *models.Price {
 	return &models.Price{
-		CurrencyName:  "RUB",
 		Value:         d.RUB,
 		MarketCap:     d.MarketCap,
 		Volume24h:     d.Volume24h,
-		GrowthRate:    (1 - d.Change24h) * 100,
+		GrowthRate:    d.Change24h,
 		LastUpdatedAt: time.Unix(d.LastUpdated, 0),
 	}
 
 }
 func (d DataUSD) ToModel() *models.Price {
 	return &models.Price{
-		CurrencyName:  "USD",
 		Value:         d.USD,
 		MarketCap:     d.MarketCap,
 		Volume24h:     d.Volume24h,
-		GrowthRate:    (1 - d.Change24h) * 100,
+		GrowthRate:    d.Change24h,
 		LastUpdatedAt: time.Unix(d.LastUpdated, 0),
 	}
 }

@@ -8,19 +8,15 @@ import (
 	"github.com/slipynil/krypto/internal/models"
 )
 
-var footerStyle = lipgloss.NewStyle().
-	Padding(1, 0, 0, 0)
+var (
+	footerStyle = lipgloss.NewStyle().
+			Padding(1, 0, 0, 0).
+			Foreground(lipgloss.Color("240")) // Темно-серый текст
 
-// var (
-// 	titleStyle = lipgloss.NewStyle().
-// 			Foreground(lipgloss.Color("#FAFAFA")).
-// 			Background(lipgloss.Color("#&D56F4")).
-// 			Padding(0, 1)
-// 	tableStyle = lipgloss.NewStyle().
-// 			BorderStyle(lipgloss.NormalBorder()).
-// 			BorderForeground(lipgloss.Color("#636363")).
-// 			Padding(1)
-// )
+	keyStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("205")). // Яркий розовый для клавиш
+			Bold(true)
+)
 
 func (m Model) View() tea.View {
 	var content string
@@ -31,6 +27,8 @@ func (m Model) View() tea.View {
 		content = m.list.View()
 	case selectedCoinView:
 		content = m.renderSelectedCoinView()
+	case errorView:
+		content = fmt.Sprintf("Ошибка: %v\n\npress q to exit", m.err)
 	}
 
 	return tea.NewView(content)
@@ -87,7 +85,11 @@ func (m Model) renderSelectedCoinView() string {
 		Render(fmt.Sprintf("--- %s (%s) ---", p.Name, string(m.currency)))
 
 	// 7. Подсказки
-	line := footerStyle.Render("Press q to quit")
+	line := footerStyle.Render(
+		fmt.Sprintf("Press %s to quit • %s to change currency",
+			keyStyle.Render("q"),
+			keyStyle.Render("c")),
+	)
 
 	return lipgloss.JoinVertical(lipgloss.Center, title, card) + line
 }

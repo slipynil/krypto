@@ -13,11 +13,13 @@ const (
 	loadView uint = iota
 	searchView
 	selectedCoinView
+	errorView
 )
 
 // Model: храним состояние
 type Model struct {
 	state        uint
+	err          error
 	list         list.Model
 	manager      *manager.Manager
 	currency     models.Currency
@@ -80,6 +82,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case selectedCoinView:
 			switch key {
+			case "c":
+				switch m.currency {
+				case models.CURRENCY_RUB:
+					m.currency = models.CURRENCY_USD
+				case models.CURRENCY_USD:
+					m.currency = models.CURRENCY_RUB
+				}
+				c := m.selectedCoin
+				return m, m.getPriceCmd(c.CoinID, c.Name)
 			case "q", "esc":
 				m.state = searchView
 				return m, nil
@@ -102,13 +113,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case GotPriceMsg:
-		if msg.Err == nil {
-			// TODO: Handle error
-			m.selectedCoin = msg.Price
-			m.state = selectedCoinView
-		} else {
-			panic(msg.Err)
+		if msg.Err != nil {
+			m.err = msg.Err
+			m.state = errorView
+			return m, nil
 		}
+		m.selectedCoin = msg.Price
+		m.state = selectedCoinView
 		return m, nil
 
 	case spinner.TickMsg:

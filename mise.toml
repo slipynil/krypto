@@ -1,0 +1,12 @@
+[tools]
+go = "1.26.4"
+
+[tasks]
+# Скрипт Сборки
+build = "go build -o bin/krypto cmd/main.go && ./bin/krypto"
+
+# Скрипт для тестов
+test = "gotestsum --format testdox --format-icons hivis"
+
+# Скрипт с зависимостью
+check = { depends = ["build", "test"] }
